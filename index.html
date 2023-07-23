@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"
+        />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.rawgit.com/jgthms/minireset.css/master/minireset.css"
+        />
+        <link rel="stylesheet" href="css/debug.css" />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Roboto:400,500,700,900"
+        />
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+        <style>
+            :root {
+                font: 0.2rem "BlinkMacSystemFont", -apple-system, "Roboto",
+                    sans-serif;
+            }
+
+            #app {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 100vw;
+                height: 100vh;
+                font-weight: 900;
+                font-size: 8rem;
+                color: hsl(0, 0%, 100%);
+                background: hsl(240, 100%, 67%);
+                user-select: none;
+            }
+
+            img {
+                width: 12rem;
+                height: 12rem;
+                vertical-align: calc(0.32109375em);
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <h1 v-html="ron"></h1>
+            <div>
+                <p v-for="(message, index) in message_object" :key="index">
+                    {{ message.text }}
+
+                    <button @click="deleteMessage(index)" type="submit">
+                        Delete
+                    </button>
+                    <button @click="handleEditingMessage(index)" type="submit">
+                        Edit
+                    </button>
+                    <template v-if="message.edit">
+                        <input
+                            v-model="message.text"
+                            placeholder="edit your message"
+                        />
+                        <button @click="saveEditedMessage(index)" type="submit">
+                            Save
+                        </button>
+                    </template>
+                </p>
+            </div>
+            <input v-model="message" placeholder="add a new message" />
+            <button @click="submitForm" type="submit">Submit</button>
+        </div>
+
+        <script>
+            "use strict";
+
+            // emojify returns the corresponding emoji image
+            function emojify(name) {
+                var out = `<img src="emojis/` + name + `.png">`;
+                return out;
+            }
+
+            var app = new Vue({
+                el: "#app",
+                data: {
+                    wizard: "",
+                    harry: emojify("harry"),
+                    hedwig: emojify("hedwig"),
+                    ron: emojify("ron"),
+                    scabbers: emojify("scabbers"),
+                    hermione: emojify("hermione"),
+                    crookshanks: emojify("crookshanks"),
+                    message: "",
+                    message_object: [
+                        { text: "demo message", edit: false },
+                        { text: "demo message 2", edit: false },
+                    ],
+                },
+                methods: {
+                    addMessage: function () {
+                        var newMessage = {
+                            text: this.message,
+                            edit: false,
+                        };
+                        this.message_object = [
+                            ...this.message_object,
+                            newMessage,
+                        ];
+
+                        this.message = ""; // Clear the input field
+                        console.log(this.message_object);
+                    },
+                    deleteMessage: function (index) {
+                        this.message_object.splice(index, 1);
+                        console.log(this.message_object);
+                    },
+                    handleEditingMessage: function (index) {
+                        this.message_object[index].edit =
+                            !this.message_object[index].edit;
+                        console.log("edit button clicked, index:", index);
+                        console.log(this.message_object[index].edit);
+                    },
+                    saveEditedMessage: function (index) {
+                        this.message_object[index].edit =
+                            !this.message_object[index].edit;
+                    },
+                    submitForm: function () {
+                        console.log("form submitted value: " + this.message);
+                        this.addMessage();
+                    },
+                },
+            });
+
+            app.wizard = app.harry;
+        </script>
+    </body>
+</html>
